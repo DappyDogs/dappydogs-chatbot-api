@@ -40,17 +40,19 @@ El usuario efectivo se obtendrá en el servidor a partir del token de Firebase A
 
 ## 3. Autenticación y autorización
 
-La API deberá aplicar, como mínimo, el siguiente flujo:
+La frontera de autenticación ya implementada aplica el siguiente flujo a cualquier endpoint protegido:
 
-1. Recibir la petición desde la aplicación móvil.
-2. Validar el token de Firebase Authentication.
-3. Obtener el identificador del usuario en el servidor.
-4. Comprobar la autorización para la capacidad solicitada y los datos afectados.
-5. Aplicar límites, validaciones y reglas de negocio.
-6. Ejecutar la lectura o preparar la propuesta de escritura.
-7. Devolver únicamente los datos necesarios para responder.
+1. Recibir desde la aplicación móvil un Firebase Auth ID Token y un Firebase App Check Token.
+2. Validar el formato, la unicidad y el tamaño de ambas cabeceras.
+3. Verificar App Check y rechazar aplicaciones no válidas.
+4. Verificar Firebase Authentication, incluida la revocación, y obtener el identificador del usuario en el servidor.
+5. Construir un principal autenticado inmutable.
+6. Comprobar la autorización para la capacidad solicitada y los datos afectados.
+7. Aplicar límites, validaciones y reglas de negocio.
+8. Ejecutar la lectura o preparar la propuesta de escritura.
+9. Devolver únicamente los datos necesarios para responder.
 
-Firebase App Check puede añadirse como señal complementaria para reducir el uso desde clientes no legítimos, pero no reemplaza la autenticación ni la autorización.
+Firebase App Check es obligatorio en la frontera implementada y no reemplaza la autenticación ni la autorización por recurso. La conexión con el proyecto real y su activación en las aplicaciones móviles permanecen pendientes. El contrato completo se documenta en [Autenticación y verificación de la aplicación](AUTHENTICATION.md).
 
 ## 4. Límites del modelo
 
@@ -178,8 +180,8 @@ Los servicios de dominio deben aislar la lógica de actividad, perfil, relacione
 
 ## 11. Flujo técnico de una consulta
 
-1. La aplicación envía el mensaje con su credencial de Firebase Authentication.
-2. La API valida la credencial y obtiene la identidad efectiva.
+1. La aplicación envía el mensaje con sus credenciales de Firebase Authentication y App Check.
+2. La API valida ambas credenciales y obtiene la identidad efectiva.
 3. El orquestador prepara instrucciones, contexto mínimo y catálogo de capacidades.
 4. El modelo responde directamente o solicita una capacidad.
 5. La API valida el nombre de la capacidad y sus argumentos.
@@ -231,7 +233,7 @@ La API conversacional no debe depender de nombres de colecciones o campos de Fir
 Antes de implementar el núcleo conversacional deben cerrarse, al menos:
 
 1. Casos de uso que formarán el primer catálogo.
-2. Contrato de autenticación entre las aplicaciones y la API.
+2. Integración operativa del contrato de autenticación implementado con ambas aplicaciones y el entorno Firebase autorizado.
 3. Modelo de autorización por recurso y relación.
 4. Contratos de dominio derivados de los datos existentes.
 5. Proveedor y modelo de lenguaje.
@@ -240,4 +242,4 @@ Antes de implementar el núcleo conversacional deben cerrarse, al menos:
 8. Flujo de confirmación para cada tipo de escritura permitido.
 9. Evaluaciones y umbrales mínimos de calidad y seguridad.
 
-La estructura actual de Firestore y sus limitaciones conocidas se documentan por separado en [Base de datos de Firestore](FIRESTORE-DATABASE.md).
+La autenticación se documenta en [Autenticación y verificación de la aplicación](AUTHENTICATION.md). La estructura actual de Firestore y sus limitaciones conocidas se documentan por separado en [Base de datos de Firestore](FIRESTORE-DATABASE.md).

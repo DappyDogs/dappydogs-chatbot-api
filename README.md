@@ -14,6 +14,7 @@ This repository contains the backend API and AI orchestration layer for the chat
 - [Scope](#scope)
 - [Core principles](#core-principles)
 - [Architecture](#architecture)
+- [Documentation](#documentation)
 - [Development](#development)
 - [Status](#status)
 
@@ -59,11 +60,17 @@ flowchart LR
     API -->|Privacy-minimized events| METRICS
 ```
 
-FastAPI provides the initial HTTP application boundary. Deployment, Firebase, authentication, and model-provider choices remain subject to their corresponding implementation and verification work.
+FastAPI provides the initial HTTP application boundary. Firebase Auth and App Check verification contracts are implemented, while runtime initialization, deployment, functional authorization, and model-provider integration remain subject to their corresponding implementation and verification work.
+
+## Documentation
+
+- [Chatbot architecture](docs/CHATBOT-ARCHITECTURE.md)
+- [Authentication and application verification](docs/AUTHENTICATION.md)
+- [Firestore database](docs/FIRESTORE-DATABASE.md)
 
 ## Development
 
-The repository is in its foundation stage. Once the Python package and development dependencies are defined, the standard command interface will be:
+The repository is in its foundation stage. The standard command interface is:
 
 ```bash
 make install-dev
@@ -80,4 +87,4 @@ On Windows, the commands use `.venv/Scripts/python.exe`; on POSIX systems, they 
 
 ## Status
 
-Version `0.1.0` establishes the executable repository foundation, including the modular package, typed settings, health endpoints and automated quality checks. Functional chatbot capabilities and external infrastructure integrations are not yet included.
+Version `0.1.0` establishes the executable repository foundation, including the modular package, typed settings, health endpoints, Firebase Auth and App Check verification boundaries, and automated quality checks. No functional chatbot endpoint, deployed Firebase integration, or model-provider integration is included yet.
