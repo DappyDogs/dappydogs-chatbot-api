@@ -24,3 +24,9 @@ def test_settings_reject_empty_service_name(service_name: str) -> None:
 def test_settings_reject_unknown_environment() -> None:
     with pytest.raises(ValidationError):
         Settings(environment="staging")  # type: ignore[arg-type]
+
+
+@pytest.mark.parametrize("timeout", [0.0, -1.0, float("inf"), float("nan")])
+def test_settings_reject_invalid_request_timeouts(timeout: float) -> None:
+    with pytest.raises(ValidationError):
+        Settings(request_timeout_seconds=timeout)

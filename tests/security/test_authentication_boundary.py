@@ -118,6 +118,9 @@ async def test_invalid_evidence_is_rejected_before_endpoint_execution(
 
     assert response.status_code == 401
     assert executed_for == []
+    public_error = response.json()["error"]
+    assert set(public_error) == {"code", "message", "request_id"}
+    assert public_error["request_id"] == response.headers["x-request-id"]
     serialized = response.text
     assert "invalid-user-token" not in serialized
     assert "invalid-app-token" not in serialized

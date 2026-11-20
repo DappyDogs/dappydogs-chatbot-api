@@ -66,6 +66,7 @@ FastAPI provides the initial HTTP application boundary. Firebase Auth and App Ch
 
 - [Chatbot architecture](docs/CHATBOT-ARCHITECTURE.md)
 - [Authentication and application verification](docs/AUTHENTICATION.md)
+- [HTTP boundary, errors, and observability](docs/HTTP-BOUNDARY.md)
 - [Firestore database](docs/FIRESTORE-DATABASE.md)
 
 ## Development
@@ -87,4 +88,4 @@ On Windows, the commands use `.venv/Scripts/python.exe`; on POSIX systems, they 
 
 ## Status
 
-Version `0.1.0` establishes the executable repository foundation, including the modular package, typed settings, health endpoints, Firebase Auth and App Check verification boundaries, and automated quality checks. No functional chatbot endpoint, deployed Firebase integration, or model-provider integration is included yet.
+Version `0.1.0` establishes the executable repository foundation, including the modular package, typed settings, health endpoints, Firebase Auth and App Check verification boundaries, a sanitized and observable HTTP boundary, and automated quality checks. No functional chatbot endpoint, deployed Firebase integration, or model-provider integration is included yet.
