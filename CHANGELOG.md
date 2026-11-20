@@ -1,20 +1,21 @@
-# Changelog
+# Registro de cambios
 
-All notable changes to this project are documented in this file.
+Todos los cambios relevantes de este proyecto se documentan en este archivo.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y el proyecto sigue el [versionado semántico](https://semver.org/lang/es/).
 
-## [Unreleased]
+## [Sin publicar]
 
-### Added
+### Añadido
 
-- Executable Python service foundation with typed settings, health endpoints, automated tests, formatting, linting, and static type checks.
-- Firebase Auth and App Check verification boundary with server-derived identity, strict header validation, sanitized failures, and security tests.
-- GitHub Actions continuous integration for formatting, linting, static type checks, and tests on every push and pull request.
+- Fundaciones ejecutables del servicio Python con configuración tipada, endpoints de salud, pruebas automatizadas, formato, lint y comprobaciones estáticas de tipos.
+- Frontera de verificación de Firebase Auth y App Check con identidad derivada en el servidor, validación estricta de cabeceras, fallos saneados y pruebas de seguridad.
+- Integración continua mediante GitHub Actions para comprobar formato, lint, tipos estáticos y pruebas en cada `push` y `pull request`.
+- Contrato HTTP versionado con correlación generada por el servidor, logs estructurados y saneados, envelopes de error estables, límites de tamaño del cuerpo y timeouts de petición.
 
 ## [0.1.0] - 2026-10-27
 
-### Added
+### Añadido
 
-- Initial repository foundation for the Dappy Dogs AI chatbot API.
-- Public project overview, development command skeleton, and Python-oriented repository exclusions.
+- Fundaciones iniciales del repositorio para la API del chatbot de IA de Dappy Dogs.
+- Presentación pública del proyecto, esqueleto de comandos de desarrollo y exclusiones del repositorio orientadas a Python.

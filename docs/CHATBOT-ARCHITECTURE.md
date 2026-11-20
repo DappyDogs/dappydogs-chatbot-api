@@ -54,6 +54,8 @@ La frontera de autenticación ya implementada aplica el siguiente flujo a cualqu
 
 Firebase App Check es obligatorio en la frontera implementada y no reemplaza la autenticación ni la autorización por recurso. La conexión con el proyecto real y su activación en las aplicaciones móviles permanecen pendientes. El contrato completo se documenta en [Autenticación y verificación de la aplicación](AUTHENTICATION.md).
 
+La frontera transversal de transporte también está implementada: reserva `/api/v1` para capacidades funcionales, genera correlación por petición, normaliza errores públicos, aplica límites de cuerpo y timeout, y emite logs JSON con campos permitidos. El contrato completo se documenta en [Frontera HTTP, errores y observabilidad](HTTP-BOUNDARY.md).
+
 ## 4. Límites del modelo
 
 El comportamiento se limitará mediante varias capas complementarias:

@@ -40,10 +40,8 @@ async def test_application_error_is_exposed_as_a_sanitized_response() -> None:
         response = await client.get("/failure")
 
     assert response.status_code == 400
-    assert response.json() == {
-        "error": {
-            "code": "application_error",
-            "message": "The operation could not be completed.",
-        }
-    }
+    payload = response.json()
+    assert payload["error"]["code"] == "application_error"
+    assert payload["error"]["message"] == "The operation could not be completed."
+    assert payload["error"]["request_id"] == response.headers["x-request-id"]
     assert "internal diagnostic" not in response.text
