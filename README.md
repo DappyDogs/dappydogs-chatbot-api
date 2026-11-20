@@ -59,7 +59,7 @@ flowchart LR
     API -->|Privacy-minimized events| METRICS
 ```
 
-Technology choices beyond Python 3.14 remain subject to technical discovery of the existing mobile application, Firebase schema, authentication flow, and deployment environment.
+FastAPI provides the initial HTTP application boundary. Deployment, Firebase, authentication, and model-provider choices remain subject to their corresponding implementation and verification work.
 
 ## Development
 
@@ -70,12 +70,14 @@ make install-dev
 make format
 make format-check
 make lint
+make types
 make test
 make check
+make run
 ```
 
 On Windows, the commands use `.venv/Scripts/python.exe`; on POSIX systems, they use `.venv/bin/python`.
 
 ## Status
 
-Version `0.1.0` establishes the repository foundation. Application code, dependency metadata, executable tests, infrastructure adapters, and deployment configuration are not yet included.
+Version `0.1.0` establishes the executable repository foundation, including the modular package, typed settings, health endpoints and automated quality checks. Functional chatbot capabilities and external infrastructure integrations are not yet included.

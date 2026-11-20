@@ -1,0 +1,45 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "dappydogs-chatbot-api"
+version = "0.1.0"
+description = "Conversational API for Dappy Dogs"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "fastapi>=0.121,<1",
+    "pydantic-settings>=2.11,<3",
+    "uvicorn[standard]>=0.38,<1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "anyio>=4.11,<5",
+    "httpx>=0.28,<1",
+    "mypy>=1.18,<2",
+    "pytest>=9,<10",
+    "pytest-cov>=7,<8",
+    "ruff>=0.14,<1",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/dappydogs_chatbot_api"]
+
+[tool.pytest.ini_options]
+addopts = "--strict-config --strict-markers -q"
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py314"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "RUF"]
+
+[tool.mypy]
+python_version = "3.14"
+strict = true
+packages = ["dappydogs_chatbot_api"]

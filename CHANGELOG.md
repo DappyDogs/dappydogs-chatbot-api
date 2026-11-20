@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+
+- Executable Python service foundation with typed settings, health endpoints, automated tests, formatting, linting, and static type checks.
+
 ## [0.1.0] - 2026-10-27
 
 ### Added

@@ -6,7 +6,7 @@ endif
 
 PYTHON_PATHS ?= src tests
 
-.PHONY: help install-dev format format-check lint test check
+.PHONY: help install-dev format format-check lint types test check run
 
 help:
 	@echo "Available targets:"
@@ -14,8 +14,10 @@ help:
 	@echo "  format        Format Python sources with Ruff"
 	@echo "  format-check  Check Python formatting with Ruff"
 	@echo "  lint          Run Ruff lint checks"
+	@echo "  types         Run static type checks"
 	@echo "  test          Run the pytest suite"
-	@echo "  check         Run formatting, lint, and tests"
+	@echo "  check         Run formatting, lint, types, and tests"
+	@echo "  run           Run the local development server"
 
 install-dev:
 	$(PYTHON) -m pip install --editable ".[dev]"
@@ -30,7 +32,13 @@ format-check:
 lint:
 	$(PYTHON) -m ruff check $(PYTHON_PATHS)
 
+types:
+	$(PYTHON) -m mypy
+
 test:
 	$(PYTHON) -m pytest
 
-check: format-check lint test
+check: format-check lint types test
+
+run:
+	$(PYTHON) -m dappydogs_chatbot_api
