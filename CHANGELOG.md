@@ -13,6 +13,7 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 - Integración continua mediante GitHub Actions para comprobar formato, lint, tipos estáticos y pruebas en cada `push` y `pull request`.
 - Contrato HTTP versionado con correlación generada por el servidor, logs estructurados y saneados, estructuras de error estables, límites de tamaño del cuerpo y timeouts de petición.
 - Modelo canónico y adaptadores de solo lectura para perfiles heredados de `Users`, con aislamiento por identidad autenticada, normalización defensiva y fixtures anonimizados.
+- Orquestador conversacional neutral al proveedor, contexto temporal acotado, registro cerrado y validado de tools y adaptador local configurable para Ollama.
 
 ## [0.1.0] - 2026-10-27
 

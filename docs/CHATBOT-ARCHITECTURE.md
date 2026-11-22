@@ -27,6 +27,8 @@ El modelo no debe acceder directamente a Firebase ni recibir credenciales de inf
 
 La API ofrecerá al modelo un catálogo explícito de capacidades. Cada capacidad tendrá un propósito concreto, parámetros validados y una respuesta estructurada.
 
+El núcleo de orquestación y el registro cerrado ya están implementados mediante contratos neutrales al proveedor. El desarrollo local utiliza temporalmente Ollama con `llama3.1:8b`; esta elección no sustituye la evaluación ni la selección definitiva del proveedor cloud. La descripción operativa se encuentra en [Orquestación del modelo y registro de herramientas](ORQUESTACION-DE-MODELO.md).
+
 Ejemplos candidatos:
 
 - Consultar el resumen de actividad reciente del perro.
