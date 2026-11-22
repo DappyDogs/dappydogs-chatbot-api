@@ -1,0 +1,75 @@
+[
+  {
+    "name": "complete-profile",
+    "observed_count": 331,
+    "fields": {
+      "userId": "verified-user",
+      "dogName": "Dappy",
+      "dogDate": "1577923200",
+      "dogBreed": 7,
+      "dogGender": 1,
+      "dogSociability": 2,
+      "dogEnergy": 3,
+      "email": "excluded@example.test",
+      "deviceToken": "excluded-token"
+    }
+  },
+  {
+    "name": "profile-without-sociability-or-energy",
+    "observed_count": 488,
+    "fields": {
+      "userId": "verified-user",
+      "dogName": "Dappy",
+      "dogDate": "1577923200",
+      "dogBreed": 7,
+      "dogGender": 1
+    }
+  },
+  {
+    "name": "account-only",
+    "observed_count": 33,
+    "fields": {
+      "userId": "verified-user"
+    }
+  },
+  {
+    "name": "null-dog-profile",
+    "observed_count": 23,
+    "fields": {
+      "userId": "verified-user",
+      "dogName": null,
+      "dogDate": null,
+      "dogBreed": 7,
+      "dogGender": 1
+    }
+  },
+  {
+    "name": "null-dog-profile-with-preferences",
+    "observed_count": 19,
+    "fields": {
+      "userId": "verified-user",
+      "dogName": null,
+      "dogDate": null,
+      "dogBreed": 7,
+      "dogGender": 1,
+      "dogSociability": 2,
+      "dogEnergy": 3
+    }
+  },
+  {
+    "name": "empty-document",
+    "observed_count": 3,
+    "fields": {}
+  },
+  {
+    "name": "empty-dog-name",
+    "observed_count": 1,
+    "fields": {
+      "userId": "verified-user",
+      "dogName": "",
+      "dogDate": "1577923200",
+      "dogBreed": 7,
+      "dogGender": 1
+    }
+  }
+]

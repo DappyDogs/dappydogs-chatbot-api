@@ -26,7 +26,7 @@ El contenido y los esquemas todavía no se han analizado de forma exhaustiva. La
 | `Notifications` | 141 | Notificaciones dirigidas a usuarios. Quedan por identificar tipos, estados, caducidad y relación con otros recursos. | Inferido por el nombre |
 | `RoutePoops` | 45 | Eventos o marcadores asociados previsiblemente a deposiciones registradas durante rutas. Debe confirmarse su vínculo exacto con rutas, usuarios y perros. | Inferido por el nombre |
 | `Routes` | 3.087 | Paseos o rutas registradas, previsiblemente con información temporal, distancia, recorrido y referencias al usuario o al perro. El esquema exacto está pendiente de inventario. | Función general conocida; esquema pendiente |
-| `Users` | 898 | Perfiles y estado de usuarios, propietarios y perros. Debe determinarse qué entidades están embebidas, qué campos son canónicos y qué datos requieren especial protección. | Función general conocida; esquema pendiente |
+| `Users` | 898 | Perfiles y estado de usuarios, propietarios y perros. La adaptación de perfil identifica siete firmas estructurales relevantes y proyecta únicamente nombre, nacimiento y catálogos del perro. | Estructura relevante analizada |
 | **Total** | **5.717** | Documentos contabilizados en las colecciones raíz. | Verificado |
 
 ## Observaciones iniciales
@@ -82,3 +82,11 @@ La siguiente revisión ampliará este documento con resultados agregados y sin d
 - Propuesta separada para cualquier dato nuevo que requiera el chatbot.
 
 Hasta completar ese análisis, las cifras de la tabla son verificadas, pero las descripciones de campos, relaciones y ciclos de vida deben considerarse provisionales.
+
+## Adaptación implementada para `Users`
+
+La API dispone de un modelo canónico mínimo y adaptadores de solo lectura para perfil. La revisión agregada confirma siete firmas estructurales relevantes entre los 898 documentos. Los campos ausentes, nulos, vacíos, inválidos y los catálogos desconocidos se conservan como diagnósticos tipados sin corregir Firestore.
+
+La fecha `dogDate` presenta 818 cadenas de diez caracteres, una de nueve, una cadena literal no numérica de cuatro caracteres y 42 valores nulos; existen además documentos sin el campo. La adaptación valida cada representación y no asume que una longitud implica por sí sola un valor correcto.
+
+El contrato detallado, los campos excluidos y las dependencias todavía abiertas se encuentran en [Adaptación de solo lectura del perfil heredado](LEGACY-USERS-PROFILE.md).
