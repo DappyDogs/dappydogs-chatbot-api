@@ -1,0 +1,11 @@
+{
+  "fields": {
+    "userId": "verified-user",
+    "dogName": "Dappy",
+    "dogDate": "1577923200",
+    "dogBreed": 7,
+    "dogGender": 1,
+    "dogSociability": 2,
+    "dogEnergy": 3
+  }
+}

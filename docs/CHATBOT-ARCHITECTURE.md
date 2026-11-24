@@ -58,7 +58,7 @@ Firebase App Check es obligatorio en la frontera implementada y no reemplaza la 
 
 La frontera transversal de transporte también está implementada: reserva `/api/v1` para capacidades funcionales, genera correlación por petición, normaliza errores públicos, aplica límites de cuerpo y timeout, y emite logs JSON con campos permitidos. El contrato completo se documenta en [Frontera HTTP, errores y observabilidad](HTTP-BOUNDARY.md).
 
-La lectura de perfil heredado se realiza mediante repositorios que reciben el principal autenticado y proyectan exclusivamente los campos canónicos del perro. El adaptador de snapshot permite el desarrollo local sin escrituras y el adaptador de Firestore conserva el mismo puerto para la integración posterior. Las reglas y limitaciones se documentan en [Adaptación de solo lectura del perfil heredado](LEGACY-USERS-PROFILE.md).
+La lectura del perfil se realiza mediante repositorios que reciben el principal autenticado y proyectan exclusivamente los campos canónicos del perro. El adaptador de snapshot permite desarrollar sin escrituras sobre la fuente compartida y el adaptador de Firestore conserva el mismo puerto para la integración definitiva. Las reglas y limitaciones se documentan en [Acceso al perfil de usuario](USER-PROFILE.md).
 
 ## 4. Límites del modelo
 

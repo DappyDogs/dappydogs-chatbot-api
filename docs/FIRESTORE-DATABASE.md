@@ -89,4 +89,4 @@ La API dispone de un modelo canónico mínimo y adaptadores de solo lectura para
 
 La fecha `dogDate` presenta 818 cadenas de diez caracteres, una de nueve, una cadena literal no numérica de cuatro caracteres y 42 valores nulos; existen además documentos sin el campo. La adaptación valida cada representación y no asume que una longitud implica por sí sola un valor correcto.
 
-El contrato detallado, los campos excluidos y las dependencias todavía abiertas se encuentran en [Adaptación de solo lectura del perfil heredado](LEGACY-USERS-PROFILE.md).
+El contrato detallado, los campos excluidos y las dependencias todavía abiertas se encuentran en [Acceso al perfil de usuario](USER-PROFILE.md).

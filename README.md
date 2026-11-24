@@ -72,7 +72,8 @@ FastAPI proporciona la frontera HTTP inicial de la aplicación. Los contratos de
 - [Autenticación y verificación de la aplicación](docs/AUTHENTICATION.md)
 - [Frontera HTTP, errores y observabilidad](docs/HTTP-BOUNDARY.md)
 - [Orquestación del modelo y registro de herramientas](docs/ORQUESTACION-DE-MODELO.md)
-- [Adaptación del perfil heredado de Users](docs/LEGACY-USERS-PROFILE.md)
+- [Capacidad conversacional de perfil](docs/CAPACIDAD-DE-PERFIL.md)
+- [Acceso al perfil de usuario](docs/USER-PROFILE.md)
 - [Base de datos de Firestore](docs/FIRESTORE-DATABASE.md)
 
 ## Desarrollo
@@ -94,7 +95,7 @@ En Windows, los comandos utilizan `.venv/Scripts/python.exe`; en sistemas POSIX 
 
 ## Estado
 
-La versión `0.1.0` establece las fundaciones ejecutables del repositorio: paquete modular, configuración tipada, endpoints de salud, fronteras de verificación de Firebase Auth y App Check, una frontera HTTP observable y saneada, adaptación defensiva de solo lectura para perfiles heredados, orquestación neutral al proveedor, registro cerrado de tools, un adaptador local temporal para Ollama y comprobaciones automáticas de calidad. Todavía no se incluyen un endpoint funcional del chatbot, las capacidades conversacionales de perfil y actividad, la integración desplegada con Firebase ni la selección del proveedor definitivo.
+La versión `0.1.0` establece las fundaciones ejecutables del repositorio: paquete modular, configuración tipada, endpoints de salud, fronteras de verificación de Firebase Auth y App Check, una frontera HTTP observable y saneada, acceso defensivo de solo lectura al perfil, orquestación neutral al proveedor, registro cerrado de tools, capacidad conversacional de perfil, un adaptador temporal para Ollama y comprobaciones automáticas de calidad. Todavía no se incluyen un endpoint funcional del chatbot, las consultas de actividad, la integración desplegada con Firebase ni la selección del proveedor definitivo.
 
 ---
 
