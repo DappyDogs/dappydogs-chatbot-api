@@ -24,9 +24,16 @@ class RecordingRepository:
     def __init__(self, result: ProfileLookup) -> None:
         self._result = result
         self.principals: list[AuthenticatedPrincipal] = []
+        self.pet_names: list[str | None] = []
 
-    def get_for(self, principal: AuthenticatedPrincipal) -> ProfileLookup:
+    def get_for(
+        self,
+        principal: AuthenticatedPrincipal,
+        *,
+        pet_name: str | None = None,
+    ) -> ProfileLookup:
         self.principals.append(principal)
+        self.pet_names.append(pet_name)
         return self._result
 
 
@@ -118,8 +125,14 @@ def test_profile_capability_returns_typed_not_found() -> None:
 
 def test_profile_capability_translates_source_failure() -> None:
     class FailingRepository:
-        def get_for(self, authenticated: AuthenticatedPrincipal) -> ProfileLookup:
+        def get_for(
+            self,
+            authenticated: AuthenticatedPrincipal,
+            *,
+            pet_name: str | None = None,
+        ) -> ProfileLookup:
             del authenticated
+            del pet_name
             raise ProfileSourceError("sensitive source detail")
 
     capability = GetDogProfile(FailingRepository())
@@ -139,3 +152,15 @@ def test_profile_query_rejects_empty_or_duplicate_attributes(
 ) -> None:
     with pytest.raises(ValueError):
         ProfileQuery(attributes)
+
+
+def test_profile_capability_passes_named_pet_selection_to_repository() -> None:
+    repository = RecordingRepository(ProfileLookup.found(complete_profile()))
+    capability = GetDogProfile(repository)
+
+    capability.execute(
+        principal(),
+        ProfileQuery((ProfileAttribute.BREED,), pet_name="Nala"),
+    )
+
+    assert repository.pet_names == ["Nala"]

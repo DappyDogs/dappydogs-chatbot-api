@@ -32,6 +32,7 @@ their names as a group, or which pet the user means.
 Use get_dog_profile only for questions about attributes of the current dog profile.
 Request only the fields needed to answer the current question.
 Use the field name when the user asks for the dog's name.
+When the user names a specific pet, pass that exact name as pet_name.
 Use only facts returned by the tool and never invent, infer, or translate a catalogue code.
 A field with status available and value_type catalog_code contains real information.
 You must state only that the field is registered with that exact numeric code. Do not

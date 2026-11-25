@@ -76,6 +76,21 @@ def test_local_repository_returns_typed_not_found(
     assert result.profile is None
 
 
+def test_local_repository_selects_pet_by_name_within_authenticated_document(
+    tmp_path: Path,
+    principal: AuthenticatedPrincipal,
+    normalizer: UserProfileNormalizer,
+) -> None:
+    write_snapshot(tmp_path, "verified-user", profile_fields())
+    repository = LocalSnapshotDogProfileRepository(tmp_path, normalizer)
+
+    selected = repository.get_for(principal, pet_name=" dApPy ")
+    missing = repository.get_for(principal, pet_name="Nala")
+
+    assert selected.status is ProfileLookupStatus.FOUND
+    assert missing.status is ProfileLookupStatus.NOT_FOUND
+
+
 def test_local_repository_rejects_path_traversal(
     tmp_path: Path, normalizer: UserProfileNormalizer
 ) -> None:

@@ -5,7 +5,12 @@ from dappydogs_chatbot_api.domain.profile import ProfileLookup
 
 
 class DogProfileRepository(Protocol):
-    def get_for(self, principal: AuthenticatedPrincipal) -> ProfileLookup: ...
+    def get_for(
+        self,
+        principal: AuthenticatedPrincipal,
+        *,
+        pet_name: str | None = None,
+    ) -> ProfileLookup: ...
 
 
 class ProfileSourceError(Exception):

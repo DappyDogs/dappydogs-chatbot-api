@@ -22,6 +22,7 @@ from dappydogs_chatbot_api.domain.authentication import AuthenticatedPrincipal
 
 class DogProfileToolArguments(ToolArguments):
     fields: tuple[ProfileAttribute, ...] = Field(min_length=1, max_length=len(ProfileAttribute))
+    pet_name: str | None = Field(default=None, min_length=1, max_length=100)
 
     @field_validator("fields", mode="before")
     @classmethod
@@ -43,6 +44,16 @@ class DogProfileToolArguments(ToolArguments):
             raise ValueError("fields must be unique")
         return value
 
+    @field_validator("pet_name")
+    @classmethod
+    def normalize_pet_name(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        normalized = value.strip()
+        if not normalized:
+            raise ValueError("pet_name cannot be blank")
+        return normalized
+
 
 class DogProfileToolHandler:
     def __init__(self, capability: GetDogProfile) -> None:
@@ -54,11 +65,15 @@ class DogProfileToolHandler:
         arguments: DogProfileToolArguments,
     ) -> ToolResult:
         try:
-            payload = self._capability.execute(principal, ProfileQuery(arguments.fields))
+            payload = self._capability.execute(
+                principal,
+                ProfileQuery(arguments.fields, pet_name=arguments.pet_name),
+            )
         except ProfileCapabilityUnavailableError as error:
             raise ToolExecutionError from error
         return ToolResult(
-            payload=payload, final_response=_render_response(payload, arguments.fields)
+            payload=payload,
+            final_response=_render_response(payload, arguments.fields, pet_name=arguments.pet_name),
         )
 
 
@@ -67,6 +82,7 @@ def build_dog_profile_tool(capability: GetDogProfile) -> RegisteredTool[DogProfi
         name="get_dog_profile",
         description=(
             "Return only the requested dog profile fields for the authenticated user. "
+            "When the user names a pet, pass that exact name in pet_name. "
             "A catalogue field with value_type catalog_code is available and its numeric "
             "value must be reported exactly without qualifying it as missing or unregistered."
         ),
@@ -75,8 +91,15 @@ def build_dog_profile_tool(capability: GetDogProfile) -> RegisteredTool[DogProfi
     )
 
 
-def _render_response(payload: Mapping[str, Any], fields: tuple[ProfileAttribute, ...]) -> str:
+def _render_response(
+    payload: Mapping[str, Any],
+    fields: tuple[ProfileAttribute, ...],
+    *,
+    pet_name: str | None,
+) -> str:
     if payload.get("status") == "not_found":
+        if pet_name is not None:
+            return f"No hay una mascota registrada con el nombre {safe_text(pet_name)}."
         return "No hay un perfil de perro registrado para tu cuenta."
     raw_fields = payload.get("fields")
     if not isinstance(raw_fields, Mapping):

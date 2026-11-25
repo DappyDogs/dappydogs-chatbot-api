@@ -10,15 +10,25 @@ Las decisiones sobre proveedor del modelo, alojamiento, transmisión de respuest
 
 El modelo de lenguaje interpreta la petición del usuario y redacta una respuesta natural. La API de Dappy Dogs conserva el control de los datos, la autorización, las reglas de negocio y cualquier operación persistente.
 
-```text
-Aplicación móvil
-  → API de Dappy Dogs
-    → modelo de lenguaje
-      → solicitud de una capacidad permitida
-    → API valida, consulta o prepara una operación
-      → resultado estructurado
-    → modelo redacta la respuesta
-  → aplicación móvil
+```mermaid
+%%{init: {"flowchart": {"curve": "stepAfter"}}}%%
+flowchart TB
+    MOBILE_REQUEST["Aplicación móvil<br/>Petición autenticada"]
+    API["API de Dappy Dogs"]
+    MODEL["Modelo de lenguaje<br/>Interpreta la intención"]
+    CAPABILITY["Capacidad permitida<br/>Argumentos tipados"]
+    APPLICATION["Aplicación<br/>Autoriza, valida y ejecuta"]
+    RESULT["Resultado estructurado"]
+    RESPONSE["Respuesta fundamentada"]
+    MOBILE_RESPONSE["Aplicación móvil<br/>Presentación de la respuesta"]
+
+    MOBILE_REQUEST --> API
+    API --> MODEL
+    MODEL --> CAPABILITY
+    CAPABILITY --> APPLICATION
+    APPLICATION --> RESULT
+    RESULT --> RESPONSE
+    RESPONSE --> MOBILE_RESPONSE
 ```
 
 El modelo no debe acceder directamente a Firebase ni recibir credenciales de infraestructura.
@@ -27,7 +37,7 @@ El modelo no debe acceder directamente a Firebase ni recibir credenciales de inf
 
 La API ofrecerá al modelo un catálogo explícito de capacidades. Cada capacidad tendrá un propósito concreto, parámetros validados y una respuesta estructurada.
 
-El núcleo de orquestación y el registro cerrado ya están implementados mediante contratos neutrales al proveedor. El desarrollo local utiliza temporalmente Ollama con `llama3.1:8b`; esta elección no sustituye la evaluación ni la selección definitiva del proveedor cloud. La descripción operativa se encuentra en [Orquestación del modelo y registro de herramientas](ORQUESTACION-DE-MODELO.md).
+El núcleo de orquestación y el registro cerrado ya están implementados mediante contratos neutrales al proveedor. El desarrollo local utiliza temporalmente Ollama con `llama3.1:8b`; esta elección no sustituye la evaluación ni la selección definitiva del proveedor cloud. La descripción operativa se encuentra en [Orquestación del modelo y registro de herramientas](ORQUESTACION-DE-MODELO.md), y el inventario funcional se mantiene en el [Catálogo general de consultas conversacionales](CATALOGO-DE-CONSULTAS.md).
 
 Ejemplos candidatos:
 

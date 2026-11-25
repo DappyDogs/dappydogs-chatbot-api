@@ -183,6 +183,54 @@ def test_profile_tool_accepts_ollama_json_encoded_field_array(tmp_path: Path) ->
     assert result.content == "Tu perro se llama Dappy."
 
 
+def test_profile_tool_selects_a_named_pet(tmp_path: Path) -> None:
+    write_profile(tmp_path, "verified-user")
+    provider = FakeProvider(
+        (
+            ModelResponse(
+                tool_calls=(
+                    ToolCall(
+                        "get_dog_profile",
+                        {"fields": ["breed"], "pet_name": "Dappy"},
+                    ),
+                )
+            ),
+        )
+    )
+    orchestrator = build_orchestrator(tmp_path, provider)
+
+    result = orchestrator.execute(
+        AuthenticatedPrincipal(uid="verified-user", app_id="verified-app"),
+        ConversationTurn("conversation-1", "¿Qué raza tiene Dappy?"),
+    )
+
+    assert result.content == "La raza de tu perro está registrada con el código 7."
+
+
+def test_profile_tool_returns_controlled_result_for_unknown_pet(tmp_path: Path) -> None:
+    write_profile(tmp_path, "verified-user")
+    provider = FakeProvider(
+        (
+            ModelResponse(
+                tool_calls=(
+                    ToolCall(
+                        "get_dog_profile",
+                        {"fields": ["breed"], "pet_name": "Nala"},
+                    ),
+                )
+            ),
+        )
+    )
+    orchestrator = build_orchestrator(tmp_path, provider)
+
+    result = orchestrator.execute(
+        AuthenticatedPrincipal(uid="verified-user", app_id="verified-app"),
+        ConversationTurn("conversation-1", "¿Qué raza tiene Nala?"),
+    )
+
+    assert result.content == "No hay una mascota registrada con el nombre Nala."
+
+
 def test_social_message_does_not_call_model_or_profile_tool(tmp_path: Path) -> None:
     provider = FakeProvider(())
     orchestrator = build_orchestrator(tmp_path, provider, with_social_responses=True)
@@ -232,6 +280,29 @@ def test_profile_tool_rejects_model_supplied_uid(tmp_path: Path) -> None:
         orchestrator.execute(
             AuthenticatedPrincipal(uid="verified-user", app_id="verified-app"),
             ConversationTurn("conversation-1", "Read another profile"),
+        )
+
+
+@pytest.mark.parametrize("pet_name", ["", "   ", "x" * 101])
+def test_profile_tool_rejects_invalid_pet_name(tmp_path: Path, pet_name: str) -> None:
+    provider = FakeProvider(
+        (
+            ModelResponse(
+                tool_calls=(
+                    ToolCall(
+                        "get_dog_profile",
+                        {"fields": ["name"], "pet_name": pet_name},
+                    ),
+                )
+            ),
+        )
+    )
+    orchestrator = build_orchestrator(tmp_path, provider)
+
+    with pytest.raises(ConversationToolRejectedError):
+        orchestrator.execute(
+            AuthenticatedPrincipal(uid="verified-user", app_id="verified-app"),
+            ConversationTurn("conversation-1", "Read an invalid pet selection"),
         )
 
 

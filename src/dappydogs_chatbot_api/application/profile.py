@@ -29,12 +29,15 @@ class ProfileCapabilityUnavailableError(Exception):
 @dataclass(frozen=True, slots=True)
 class ProfileQuery:
     attributes: tuple[ProfileAttribute, ...]
+    pet_name: str | None = None
 
     def __post_init__(self) -> None:
         if not self.attributes:
             raise ValueError("at least one profile attribute is required")
         if len(self.attributes) != len(set(self.attributes)):
             raise ValueError("profile attributes must be unique")
+        if self.pet_name is not None and not self.pet_name.strip():
+            raise ValueError("pet_name cannot be blank")
 
 
 class GetDogProfile:
@@ -47,7 +50,7 @@ class GetDogProfile:
         query: ProfileQuery,
     ) -> Mapping[str, Any]:
         try:
-            lookup = self._repository.get_for(principal)
+            lookup = self._repository.get_for(principal, pet_name=query.pet_name)
         except ProfileSourceError as error:
             raise ProfileCapabilityUnavailableError from error
         if lookup.status is ProfileLookupStatus.NOT_FOUND:

@@ -49,19 +49,21 @@ El servicio se plantea como una API modular en Python con fronteras explícitas 
 
 ```mermaid
 %%{init: {"flowchart": {"curve": "stepAfter"}}}%%
-flowchart LR
+flowchart TB
     APP["Aplicación móvil de Dappy Dogs"]
     API["API del chatbot"]
     AUTH["Autenticación"]
+    CORE["Casos de uso y orquestación"]
     FB["Firebase / Cloud Firestore"]
     LLM["Proveedor del modelo de lenguaje"]
     METRICS["Métricas de uso"]
 
     APP -->|HTTPS autenticado| API
     API -->|Verificar identidad| AUTH
-    API -->|Lecturas y escrituras autorizadas| FB
-    API -->|Contexto estructurado mínimo| LLM
-    API -->|Eventos con privacidad minimizada| METRICS
+    AUTH -->|Principal verificado| CORE
+    CORE -->|Datos autorizados| FB
+    CORE -->|Contexto mínimo| LLM
+    CORE -->|Eventos minimizados| METRICS
 ```
 
 FastAPI proporciona la frontera HTTP inicial de la aplicación. Los contratos de verificación de Firebase Auth y App Check están implementados. La inicialización en tiempo de ejecución, el despliegue, la autorización funcional y la integración con el proveedor del modelo quedan sujetos a sus correspondientes tareas de implementación y verificación.
@@ -72,6 +74,7 @@ FastAPI proporciona la frontera HTTP inicial de la aplicación. Los contratos de
 - [Autenticación y verificación de la aplicación](docs/AUTHENTICATION.md)
 - [Frontera HTTP, errores y observabilidad](docs/HTTP-BOUNDARY.md)
 - [Orquestación del modelo y registro de herramientas](docs/ORQUESTACION-DE-MODELO.md)
+- [Catálogo general de consultas conversacionales](docs/CATALOGO-DE-CONSULTAS.md)
 - [Capacidad conversacional de perfil](docs/CAPACIDAD-DE-PERFIL.md)
 - [Acceso al perfil de usuario](docs/USER-PROFILE.md)
 - [Base de datos de Firestore](docs/FIRESTORE-DATABASE.md)

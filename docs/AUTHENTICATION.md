@@ -21,21 +21,16 @@ App Check complementa a Firebase Auth: no identifica al usuario ni concede acces
 %%{init: {"flowchart": {"curve": "stepAfter"}}}%%
 flowchart TB
     MOBILE["Aplicación iOS o Android"]
-    AUTH_TOKEN["Firebase Auth ID Token"]
-    APP_TOKEN["Firebase App Check Token"]
+    EVIDENCE["ID Token de Firebase Auth<br/>Token de Firebase App Check"]
     HTTP["Frontera HTTP de la API<br/>Valida formato, unicidad y tamaño"]
-    AUTH_USE_CASE["Caso de uso de autenticación"]
     APP_CHECK["Verificación de App Check"]
     FIREBASE_AUTH["Verificación de Firebase Auth y revocación"]
     PRINCIPAL["AuthenticatedPrincipal<br/>uid y app_id verificados"]
     PROTECTED["Caso de uso protegido"]
 
-    MOBILE --> AUTH_TOKEN
-    MOBILE --> APP_TOKEN
-    AUTH_TOKEN --> HTTP
-    APP_TOKEN --> HTTP
-    HTTP --> AUTH_USE_CASE
-    AUTH_USE_CASE --> APP_CHECK
+    MOBILE --> EVIDENCE
+    EVIDENCE --> HTTP
+    HTTP --> APP_CHECK
     APP_CHECK --> FIREBASE_AUTH
     FIREBASE_AUTH --> PRINCIPAL
     PRINCIPAL --> PROTECTED

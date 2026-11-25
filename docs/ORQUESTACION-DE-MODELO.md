@@ -8,23 +8,24 @@ La capa de orquestación procesa un turno conversacional sin conceder al modelo 
 
 ```mermaid
 %%{init: {"flowchart": {"curve": "stepAfter"}}}%%
-flowchart LR
+flowchart TB
     USER["Mensaje autenticado"]
     ORCH["Orquestador"]
     MODEL["Proveedor del modelo"]
+    DECISION{"Resultado del modelo"}
     REGISTRY["Registro cerrado de tools"]
     HANDLER["Manejador de aplicación"]
+    GROUNDED["Resultado validado y fundamentado"]
     RESULT["Respuesta fundamentada"]
 
     USER --> ORCH
     ORCH --> MODEL
-    MODEL --> ORCH
-    ORCH --> REGISTRY
+    MODEL --> DECISION
+    DECISION -->|Respuesta directa permitida| RESULT
+    DECISION -->|Solicitud de tool| REGISTRY
     REGISTRY --> HANDLER
-    HANDLER --> REGISTRY
-    REGISTRY --> ORCH
-    ORCH --> MODEL
-    MODEL --> RESULT
+    HANDLER --> GROUNDED
+    GROUNDED --> RESULT
 ```
 
 El orquestador separa la instrucción del sistema, los mensajes del usuario, las solicitudes de tools y sus resultados. La identidad procede siempre del principal autenticado y se entrega directamente al manejador; nunca forma parte de los argumentos que puede generar el modelo.

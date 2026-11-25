@@ -30,6 +30,8 @@ El modelo `DogProfile` contiene exclusivamente:
 
 El directorio de mascotas representa una colección `0..N` asociada al principal autenticado. Cada entrada contiene una referencia interna estable y el nombre cuando está disponible. La consulta de cantidad se calcula a partir de esa colección, no mediante una estimación del modelo.
 
+Las consultas de atributos pueden incluir un nombre de mascota. La fuente debe resolverlo únicamente dentro del directorio del principal autenticado y devolver un resultado ausente si no existe. Nunca utiliza un `uid` proporcionado por el modelo ni amplía la búsqueda a mascotas de otras cuentas.
+
 La fuente temporal actual contiene un único perro embebido en `Users/{uid}` y, por tanto, su adaptador solo puede aportar cero o una entrada. Esto no limita el contrato de producto. La consulta Firestore definitiva para múltiples mascotas se implementará cuando se identifiquen y validen la colección real, su relación de propiedad y sus reglas de acceso.
 
 No contiene identificadores, correo electrónico, nombre del propietario, imágenes, tokens de dispositivo, coordenadas, estado premium, amistades ni estado del paseo. Estos campos tampoco aparecen en los fixtures ni en los logs del adaptador.
