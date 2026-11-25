@@ -5,7 +5,11 @@ from datetime import UTC, datetime, timedelta
 from threading import RLock
 from typing import Protocol
 
-from dappydogs_chatbot_api.application.tools import ToolRegistry, ToolRegistryError
+from dappydogs_chatbot_api.application.tools import (
+    ToolExecutionError,
+    ToolRegistry,
+    ToolRegistryError,
+)
 from dappydogs_chatbot_api.domain.authentication import AuthenticatedPrincipal
 from dappydogs_chatbot_api.domain.conversation import ConversationMessage, MessageRole
 from dappydogs_chatbot_api.ports.model import ModelProvider, ModelProviderError
@@ -20,6 +24,10 @@ class ConversationProviderUnavailableError(ConversationError):
 
 
 class ConversationToolRejectedError(ConversationError):
+    pass
+
+
+class ConversationToolUnavailableError(ConversationError):
     pass
 
 
@@ -116,6 +124,7 @@ class ConversationOrchestrator:
         store: ConversationStore,
         *,
         system_instruction: str,
+        direct_responder: Callable[[str], str | None] | None = None,
         max_tool_rounds: int = 3,
         max_tool_calls_per_round: int = 4,
         max_user_message_chars: int = 8_000,
@@ -135,6 +144,7 @@ class ConversationOrchestrator:
         self._registry = registry
         self._store = store
         self._system_instruction = system_instruction
+        self._direct_responder = direct_responder
         self._max_tool_rounds = max_tool_rounds
         self._max_tool_calls_per_round = max_tool_calls_per_round
         self._max_user_message_chars = max_user_message_chars
@@ -149,6 +159,12 @@ class ConversationOrchestrator:
             raise ConversationLimitError
         history = list(self._store.load(principal, turn.conversation_id))
         history.append(ConversationMessage(MessageRole.USER, turn.user_message))
+        if self._direct_responder is not None:
+            direct_response = self._direct_responder(turn.user_message)
+            if direct_response is not None:
+                history.append(ConversationMessage(MessageRole.ASSISTANT, direct_response))
+                self._store.save(principal, turn.conversation_id, history)
+                return ConversationResult(direct_response)
         provider_messages = [
             ConversationMessage(MessageRole.SYSTEM, self._system_instruction),
             *history,
@@ -193,11 +209,27 @@ class ConversationOrchestrator:
                     tool_calls=response.tool_calls,
                 )
             )
+            executed_results = []
             for call, prepared in zip(response.tool_calls, prepared_calls, strict=True):
                 try:
                     result = self._registry.execute(principal, prepared)
+                except ToolExecutionError as error:
+                    raise ConversationToolUnavailableError from error
                 except ToolRegistryError as error:
                     raise ConversationToolRejectedError from error
+                executed_results.append(result)
                 provider_messages.append(
-                    ConversationMessage(MessageRole.TOOL, result, tool_name=call.name)
+                    ConversationMessage(MessageRole.TOOL, result.content, tool_name=call.name)
                 )
+            final_responses = tuple(
+                result.final_response
+                for result in executed_results
+                if result.final_response is not None
+            )
+            if final_responses:
+                if len(final_responses) != len(executed_results):
+                    raise ConversationToolRejectedError
+                content = " ".join(final_responses)
+                history.append(ConversationMessage(MessageRole.ASSISTANT, content))
+                self._store.save(principal, turn.conversation_id, history)
+                return ConversationResult(content)

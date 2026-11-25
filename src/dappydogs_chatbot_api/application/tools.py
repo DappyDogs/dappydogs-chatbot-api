@@ -15,8 +15,19 @@ class ToolArguments(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
 
+@dataclass(frozen=True, slots=True)
+class ToolResult:
+    payload: Mapping[str, Any]
+    final_response: str | None = None
+
+    def __post_init__(self) -> None:
+        if self.final_response is not None and not self.final_response.strip():
+            raise ValueError("final_response cannot be blank")
+
+
+type ToolOutput = Mapping[str, Any] | ToolResult
 type ToolHandler[ArgumentsT: ToolArguments] = Callable[
-    [AuthenticatedPrincipal, ArgumentsT], Mapping[str, Any]
+    [AuthenticatedPrincipal, ArgumentsT], ToolOutput
 ]
 
 
@@ -36,9 +47,19 @@ class InvalidToolResultError(ToolRegistryError):
     pass
 
 
+class ToolExecutionError(Exception):
+    """Signal a controlled application dependency failure during tool execution."""
+
+
 @dataclass(frozen=True, slots=True)
 class PreparedToolCall:
-    execute: Callable[[AuthenticatedPrincipal], Mapping[str, Any]]
+    execute: Callable[[AuthenticatedPrincipal], ToolOutput]
+
+
+@dataclass(frozen=True, slots=True)
+class ExecutedToolResult:
+    content: str
+    final_response: str | None
 
 
 @dataclass(frozen=True, slots=True)
@@ -96,8 +117,16 @@ class ToolRegistry:
             raise InvalidToolArgumentsError from error
         return PreparedToolCall(execute=lambda principal: tool.handler(principal, validated))
 
-    def execute(self, principal: AuthenticatedPrincipal, prepared: PreparedToolCall) -> str:
-        result = prepared.execute(principal)
+    def execute(
+        self, principal: AuthenticatedPrincipal, prepared: PreparedToolCall
+    ) -> ExecutedToolResult:
+        output = prepared.execute(principal)
+        if isinstance(output, ToolResult):
+            result = output.payload
+            final_response = output.final_response
+        else:
+            result = output
+            final_response = None
         try:
             serialized = json.dumps(
                 dict(result), ensure_ascii=False, separators=(",", ":"), sort_keys=True
@@ -106,4 +135,9 @@ class ToolRegistry:
             raise InvalidToolResultError from error
         if len(serialized.encode("utf-8")) > self._max_result_bytes:
             raise InvalidToolResultError
-        return serialized
+        if (
+            final_response is not None
+            and len(final_response.encode("utf-8")) > self._max_result_bytes
+        ):
+            raise InvalidToolResultError
+        return ExecutedToolResult(content=serialized, final_response=final_response)

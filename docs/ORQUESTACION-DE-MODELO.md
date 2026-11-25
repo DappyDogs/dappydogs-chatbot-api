@@ -2,29 +2,30 @@
 
 ## Propósito
 
-La capa de orquestación procesa un turno conversacional sin conceder al modelo acceso directo a Firebase, autoridad sobre la identidad ni capacidad para ejecutar operaciones fuera del registro permitido. El núcleo utiliza contratos neutrales al proveedor; Ollama es únicamente el adaptador local inicial para desarrollo.
+La capa de orquestación procesa un turno conversacional sin conceder al modelo acceso directo a Firebase, autoridad sobre la identidad ni capacidad para ejecutar operaciones fuera del registro permitido. El núcleo utiliza contratos neutrales al proveedor; Ollama es el adaptador inicial y podrá sustituirse sin modificar el contrato de aplicación.
 
 ## Flujo controlado
 
 ```mermaid
 %%{init: {"flowchart": {"curve": "stepAfter"}}}%%
-flowchart LR
+flowchart TB
     USER["Mensaje autenticado"]
     ORCH["Orquestador"]
     MODEL["Proveedor del modelo"]
+    DECISION{"Resultado del modelo"}
     REGISTRY["Registro cerrado de tools"]
     HANDLER["Manejador de aplicación"]
+    GROUNDED["Resultado validado y fundamentado"]
     RESULT["Respuesta fundamentada"]
 
     USER --> ORCH
     ORCH --> MODEL
-    MODEL --> ORCH
-    ORCH --> REGISTRY
+    MODEL --> DECISION
+    DECISION -->|Respuesta directa permitida| RESULT
+    DECISION -->|Solicitud de tool| REGISTRY
     REGISTRY --> HANDLER
-    HANDLER --> REGISTRY
-    REGISTRY --> ORCH
-    ORCH --> MODEL
-    MODEL --> RESULT
+    HANDLER --> GROUNDED
+    GROUNDED --> RESULT
 ```
 
 El orquestador separa la instrucción del sistema, los mensajes del usuario, las solicitudes de tools y sus resultados. La identidad procede siempre del principal autenticado y se entrega directamente al manejador; nunca forma parte de los argumentos que puede generar el modelo.
@@ -33,7 +34,7 @@ El orquestador separa la instrucción del sistema, los mensajes del usuario, las
 
 Cada tool declara un nombre único, una descripción, un modelo de argumentos Pydantic con propiedades adicionales prohibidas y un manejador de aplicación. Antes de ejecutar un grupo de solicitudes se validan todas sus tools y argumentos, por lo que una solicitud desconocida o inválida impide ejecutar el grupo completo.
 
-Los resultados se serializan como JSON estructurado y tienen un tamaño máximo. El modelo solamente recibe el resultado mínimo devuelto por el manejador. Las implementaciones concretas de las capacidades de perfil, actividad y salud pertenecen a sus tareas específicas y todavía no forman parte de este registro.
+Los resultados se serializan como JSON estructurado y tienen un tamaño máximo. Como regla general, el modelo solamente recibe el resultado mínimo devuelto por el manejador. La capacidad de perfil `get_dog_profile` aplica una garantía más estricta: tras la selección de campos por el modelo, la aplicación renderiza directamente la respuesta fundamentada y no realiza una segunda llamada al modelo. Esta capacidad se documenta en [Capacidad conversacional de perfil](CAPACIDAD-DE-PERFIL.md). Las capacidades de actividad y salud pertenecen a sus tareas específicas y todavía no forman parte del registro.
 
 ## Contexto conversacional
 
@@ -41,7 +42,7 @@ El almacén inicial mantiene el contexto en memoria, separado por usuario autent
 
 El turno limita el tamaño del mensaje y el número de rondas de tools. Los fallos del proveedor, las respuestas inválidas, las tools desconocidas, los argumentos adicionales y los límites excedidos se convierten en estados controlados sin ejecutar operaciones adicionales.
 
-## Adaptador local de Ollama
+## Adaptador temporal de Ollama
 
 El adaptador inicial utiliza la API HTTP de Ollama mediante `/api/chat` y soporta llamadas estructuradas a tools. Su selección es temporal para facilitar el desarrollo local y no determina el proveedor ni el modelo que se utilizarán en los entornos desplegados.
 
@@ -62,4 +63,4 @@ Un proveedor cloud deberá implementar el mismo puerto neutral de mensajes, tool
 
 ## Estado actual
 
-El contrato del orquestador, el registro cerrado, el contexto acotado y el adaptador Ollama están implementados y probados. También se ha verificado localmente que `llama3.1:8b` solicita una tool estructurada mediante Ollama. Aún no existe un endpoint público del chatbot, no se han registrado las capacidades funcionales y no se ha seleccionado el proveedor definitivo.
+El contrato del orquestador, el registro cerrado, el contexto acotado, la capacidad de perfil y el adaptador Ollama están implementados y probados. También se ha verificado con `llama3.1:8b` que el modelo solicita `get_dog_profile` y que la aplicación responde únicamente con los campos solicitados, incluidos los códigos de catálogo sin etiquetas inferidas. Aún no existe un endpoint público del chatbot, no se han registrado las capacidades de actividad o salud y no se ha seleccionado el proveedor definitivo.

@@ -42,7 +42,12 @@ class FirestoreDogProfileRepository:
         self._client = client
         self._normalizer = normalizer
 
-    def get_for(self, principal: AuthenticatedPrincipal) -> ProfileLookup:
+    def get_for(
+        self,
+        principal: AuthenticatedPrincipal,
+        *,
+        pet_name: str | None = None,
+    ) -> ProfileLookup:
         try:
             snapshot = self._client.collection("Users").document(principal.uid).get()
             if not snapshot.exists:
@@ -52,7 +57,8 @@ class FirestoreDogProfileRepository:
             raise ProfileSourceError("Profile source is unavailable") from error
         if fields is None:
             raise ProfileSourceError("Profile source returned no fields")
-        return self._normalize(snapshot.id, principal, fields)
+        lookup = self._normalize(snapshot.id, principal, fields)
+        return _select_by_name(lookup, pet_name)
 
     def _normalize(
         self,
@@ -74,7 +80,12 @@ class LocalSnapshotDogProfileRepository:
         self._users_directory = users_directory.resolve()
         self._normalizer = normalizer
 
-    def get_for(self, principal: AuthenticatedPrincipal) -> ProfileLookup:
+    def get_for(
+        self,
+        principal: AuthenticatedPrincipal,
+        *,
+        pet_name: str | None = None,
+    ) -> ProfileLookup:
         path = (self._users_directory / f"{principal.uid}.json").resolve()
         if path.parent != self._users_directory:
             raise ProfileSourceError("Invalid profile document identifier")
@@ -96,7 +107,7 @@ class LocalSnapshotDogProfileRepository:
             fields=LegacyUserProfileFields.from_mapping(fields),
         )
         _log_warnings(profile.warnings)
-        return ProfileLookup.found(profile)
+        return _select_by_name(ProfileLookup.found(profile), pet_name)
 
 
 def _log_warnings(warnings: tuple[ProfileWarning, ...]) -> None:
@@ -104,3 +115,12 @@ def _log_warnings(warnings: tuple[ProfileWarning, ...]) -> None:
         field = getattr(warning, "field", "unknown")
         issue = getattr(warning, "issue", "unknown")
         _logger.info("profile_compatibility_warning", extra={"field": field, "issue": issue})
+
+
+def _select_by_name(lookup: ProfileLookup, pet_name: str | None) -> ProfileLookup:
+    if pet_name is None or lookup.profile is None:
+        return lookup
+    stored_name = lookup.profile.name
+    if stored_name is None or stored_name.strip().casefold() != pet_name.strip().casefold():
+        return ProfileLookup.not_found()
+    return lookup

@@ -12,8 +12,11 @@ El formato se basa en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/
 - Frontera de verificación de Firebase Auth y App Check con identidad derivada en el servidor, validación estricta de cabeceras, fallos saneados y pruebas de seguridad.
 - Integración continua mediante GitHub Actions para comprobar formato, lint, tipos estáticos y pruebas en cada `push` y `pull request`.
 - Contrato HTTP versionado con correlación generada por el servidor, logs estructurados y saneados, estructuras de error estables, límites de tamaño del cuerpo y timeouts de petición.
-- Modelo canónico y adaptadores de solo lectura para perfiles heredados de `Users`, con aislamiento por identidad autenticada, normalización defensiva y fixtures anonimizados.
-- Orquestador conversacional neutral al proveedor, contexto temporal acotado, registro cerrado y validado de tools y adaptador local configurable para Ollama.
+- Modelo canónico y fuentes de solo lectura para perfiles de `Users`, con aislamiento por identidad autenticada, normalización defensiva y fixtures anonimizados.
+- Orquestador conversacional neutral al proveedor, contexto temporal acotado, registro cerrado y validado de tools y adaptador configurable, implementado inicialmente con Ollama.
+- Capacidades `get_registered_pets` y `get_dog_profile` aisladas por principal autenticado, directorio `0..N` con recuento y nombres disponibles, selección de mascota por nombre, proyección mínima de atributos, conservación de códigos numéricos y ejecutor conversacional sobre las fuentes configuradas, compatible con la serialización de argumentos de Ollama.
+- Respuestas sociales deterministas para saludos, agradecimientos y despedidas completas, sin consultar el modelo ni la fuente de perfiles.
+- Catálogo general de consultas conversacionales con intenciones disponibles, variaciones representativas y capacidades planificadas.
 
 ## [0.1.0] - 2026-10-27
 

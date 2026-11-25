@@ -10,15 +10,25 @@ Las decisiones sobre proveedor del modelo, alojamiento, transmisión de respuest
 
 El modelo de lenguaje interpreta la petición del usuario y redacta una respuesta natural. La API de Dappy Dogs conserva el control de los datos, la autorización, las reglas de negocio y cualquier operación persistente.
 
-```text
-Aplicación móvil
-  → API de Dappy Dogs
-    → modelo de lenguaje
-      → solicitud de una capacidad permitida
-    → API valida, consulta o prepara una operación
-      → resultado estructurado
-    → modelo redacta la respuesta
-  → aplicación móvil
+```mermaid
+%%{init: {"flowchart": {"curve": "stepAfter"}}}%%
+flowchart TB
+    MOBILE_REQUEST["Aplicación móvil<br/>Petición autenticada"]
+    API["API de Dappy Dogs"]
+    MODEL["Modelo de lenguaje<br/>Interpreta la intención"]
+    CAPABILITY["Capacidad permitida<br/>Argumentos tipados"]
+    APPLICATION["Aplicación<br/>Autoriza, valida y ejecuta"]
+    RESULT["Resultado estructurado"]
+    RESPONSE["Respuesta fundamentada"]
+    MOBILE_RESPONSE["Aplicación móvil<br/>Presentación de la respuesta"]
+
+    MOBILE_REQUEST --> API
+    API --> MODEL
+    MODEL --> CAPABILITY
+    CAPABILITY --> APPLICATION
+    APPLICATION --> RESULT
+    RESULT --> RESPONSE
+    RESPONSE --> MOBILE_RESPONSE
 ```
 
 El modelo no debe acceder directamente a Firebase ni recibir credenciales de infraestructura.
@@ -27,7 +37,7 @@ El modelo no debe acceder directamente a Firebase ni recibir credenciales de inf
 
 La API ofrecerá al modelo un catálogo explícito de capacidades. Cada capacidad tendrá un propósito concreto, parámetros validados y una respuesta estructurada.
 
-El núcleo de orquestación y el registro cerrado ya están implementados mediante contratos neutrales al proveedor. El desarrollo local utiliza temporalmente Ollama con `llama3.1:8b`; esta elección no sustituye la evaluación ni la selección definitiva del proveedor cloud. La descripción operativa se encuentra en [Orquestación del modelo y registro de herramientas](ORQUESTACION-DE-MODELO.md).
+El núcleo de orquestación y el registro cerrado ya están implementados mediante contratos neutrales al proveedor. El desarrollo local utiliza temporalmente Ollama con `llama3.1:8b`; esta elección no sustituye la evaluación ni la selección definitiva del proveedor cloud. La descripción operativa se encuentra en [Orquestación del modelo y registro de herramientas](ORQUESTACION-DE-MODELO.md), y el inventario funcional se mantiene en el [Catálogo general de consultas conversacionales](CATALOGO-DE-CONSULTAS.md).
 
 Ejemplos candidatos:
 
@@ -58,7 +68,7 @@ Firebase App Check es obligatorio en la frontera implementada y no reemplaza la 
 
 La frontera transversal de transporte también está implementada: reserva `/api/v1` para capacidades funcionales, genera correlación por petición, normaliza errores públicos, aplica límites de cuerpo y timeout, y emite logs JSON con campos permitidos. El contrato completo se documenta en [Frontera HTTP, errores y observabilidad](HTTP-BOUNDARY.md).
 
-La lectura de perfil heredado se realiza mediante repositorios que reciben el principal autenticado y proyectan exclusivamente los campos canónicos del perro. El adaptador de snapshot permite el desarrollo local sin escrituras y el adaptador de Firestore conserva el mismo puerto para la integración posterior. Las reglas y limitaciones se documentan en [Adaptación de solo lectura del perfil heredado](LEGACY-USERS-PROFILE.md).
+La lectura del perfil se realiza mediante repositorios que reciben el principal autenticado y proyectan exclusivamente los campos canónicos del perro. El adaptador de snapshot permite desarrollar sin escrituras sobre la fuente compartida y el adaptador de Firestore conserva el mismo puerto para la integración definitiva. Las reglas y limitaciones se documentan en [Acceso al perfil de usuario](USER-PROFILE.md).
 
 ## 4. Límites del modelo
 
